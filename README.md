@@ -51,7 +51,7 @@ python -m paddle.distributed.launch  scripts/example.py --mp 1 --ckpt_dir ckpt/7
 
 
 
-If you like the project, please show your support by [leaving a star ⭐](https://github.com/nebuly-ai/nebullvm/stargazers).
+If you like the project, please show your support by [leaving a star ⭐](https://github.com/MiuGod0126/ppllama/stargazers).
 
 
 

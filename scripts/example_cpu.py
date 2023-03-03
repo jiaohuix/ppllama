@@ -88,7 +88,7 @@ def load(ckpt_dir: str, tokenizer_path: str, local_rank: int, world_size: int) -
     return generator
 
 
-def main(ckpt_dir: str, tokenizer_path: str, promt:str = "The capital of Germany is the city of",
+def main(ckpt_dir: str, tokenizer_path: str, prompt:str = "The capital of Germany is the city of",
          mp: int = 1, temperature: float = 0.8, top_p: float = 0.95):
     paddle.set_device("cpu")
     local_rank, world_size = setup_model_parallel(mp_degree=mp)
@@ -96,7 +96,7 @@ def main(ckpt_dir: str, tokenizer_path: str, promt:str = "The capital of Germany
         sys.stdout = open(os.devnull, 'w')
 
     generator = load(ckpt_dir, tokenizer_path, local_rank, world_size)
-    prompts = [promt]
+    prompts = [prompt]
     results = generator.generate(prompts, max_gen_len=256, temperature=temperature, top_p=top_p)
 
     for idx,result in enumerate(results):

@@ -56,7 +56,7 @@ This repository contains scripts for converting checkpoints from torch to paddle
 cpu: (50G RAM, 20min)
 
 ```shell
-python -m paddle.distributed.launch  scripts/example_cpu.py --promt "The capital of Germany is the city of" --mp 1 --ckpt_dir ckpt/7B/ --tokenizer_path  ckpt/tokenizer.model
+python -m paddle.distributed.launch  scripts/example_cpu.py --prompt "The capital of Germany is the city of" --mp 1 --ckpt_dir ckpt/7B/ --tokenizer_path  ckpt/tokenizer.model
 ```
 
 ![ppllama cpu](https://i.328888.xyz/2023/03/04/FQejA.png)

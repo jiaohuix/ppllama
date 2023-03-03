@@ -34,4 +34,4 @@ def convert_pytorch_checkpoint_to_paddle(
 if __name__ == '__main__':
     assert len(sys.argv) == 2, f"usage: python {sys.argv[0]} <torch_ckpt_path>(xx.pth)"
     torch_ckpt_path = sys.argv[1]
-    convert_pytorch_checkpoint_to_paddle(torch_ckpt_path,file.replace("pth","pdparams"))
+    convert_pytorch_checkpoint_to_paddle(torch_ckpt_path,torch_ckpt_path.replace("pth","pdparams"))

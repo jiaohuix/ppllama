@@ -68,10 +68,11 @@ def load(ckpt_dir: str, tokenizer_path: str, local_rank: int, world_size: int) -
     #PosixPath' object has no attribute 'tell' ; issue: https://github.com/PaddlePaddle/Paddle/issues/34614#issuecomment-1074719350
     checkpoint = paddle.load(str(ckpt_path))
     # Variable [ vocab_parallel_embedding_0.w_0 ] need tensor with dtype paddle.float32  but load tensor with dtype paddle.float16
-    change_dtype(checkpoint)
+    # change_dtype(checkpoint)
 
     with open(Path(ckpt_dir) / "params.json", "r") as f:
         params = json.loads(f.read())
+    # https://github.com/facebookresearch/llama/issues/42#issuecomment-1451321954
     model_args: ModelArgs = ModelArgs(max_seq_len=1024, max_batch_size=1, **params)
     tokenizer = Tokenizer(model_path=tokenizer_path)
     model_args.vocab_size = tokenizer.n_words
@@ -87,22 +88,20 @@ def load(ckpt_dir: str, tokenizer_path: str, local_rank: int, world_size: int) -
     return generator
 
 
-def main(ckpt_dir: str, tokenizer_path: str, mp: int = 1, temperature: float = 0.8, top_p: float = 0.95):
+def main(ckpt_dir: str, tokenizer_path: str, promt:str = "The capital of Germany is the city of",
+         mp: int = 1, temperature: float = 0.8, top_p: float = 0.95):
+    paddle.set_device("cpu")
     local_rank, world_size = setup_model_parallel(mp_degree=mp)
     if local_rank > 0:
         sys.stdout = open(os.devnull, 'w')
 
     generator = load(ckpt_dir, tokenizer_path, local_rank, world_size)
-    # prompts = ["The capital of Germany is the city of",
-    #            "Here is my sonnet in the style of Shakespeare about an artificial intelligence:"]
-
-    # promt_bsz < max_batch_size=1   ; https://github.com/facebookresearch/llama/issues/42#issuecomment-1451321954
-    prompts = ["The capital of Germany is the city of"]
-
+    prompts = [promt]
     results = generator.generate(prompts, max_gen_len=256, temperature=temperature, top_p=top_p)
 
-    for result in results:
-        print(result)
+    for idx,result in enumerate(results):
+        print(f"[{idx}] Promt is: \n {prompts[idx]} \n")
+        print(f"result is:\n {result}")
         print("\n==================================\n")
 
 

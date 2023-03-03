@@ -40,7 +40,7 @@ def save_paddle_checkpoint_from_numpy(torch_ckpt_path, outfolder):
     for name in np_ckpt_names:
         np_file = os.path.join(outfolder, name)
         key = name.split("-")[1].replace(".npy", "")
-        paddle_state_dict[key] = np.load(np_file)
+        paddle_state_dict[key] = np.load(np_file).astype("float32")
         os.remove(np_file)
 
     paddle.save(paddle_state_dict, paddle_ckpt_path)

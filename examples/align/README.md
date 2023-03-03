@@ -21,6 +21,8 @@ Convert torch ckpt to paddle:
 
 ```shell
 python scripts/conver_ckpt.py ckpt/toy/consolidated.00.pth
+# If the weights are too large, it is recommended to use the following command, which will split the torch weights into a series of numpy files and finally merge them with paddle
+python scripts/conver_ckpt_offline.py ckpt/toy/consolidated.00.pth ckpt/toy/np_ckpt
 ```
 
 Forward paddle:

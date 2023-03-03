@@ -10,7 +10,6 @@ def print_state(state):
     for k, v in state.items():
         print(k, v.shape)
 
-
 def convert_pytorch_checkpoint_to_numpy(
         torch_ckpt_path="model.pth",
         outfolder="."
@@ -30,7 +29,7 @@ def convert_pytorch_checkpoint_to_numpy(
             v = v.transpose(0, 1)
 
         print(f"Converting {idx + 1} key: {k} | is_transpose {is_transpose}")
-        np.save(outname, v.data.numpy())
+        np.save(outname, v.data.numpy().astype("float32"))
     del pytorch_state_dict
 
 

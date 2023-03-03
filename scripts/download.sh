@@ -1,9 +1,14 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the GNU General Public License version 3.
 
-PRESIGNED_URL=""             # replace with presigned url from email
-MODEL_SIZE="7B,13B,30B,65B"  # edit this list with the model sizes you wish to download
-TARGET_FOLDER=""             # where all files should end up
+if [ $# -lt 3 ];then
+  echo "usage: bash $0 <MODEL_SIZE>(7B/13B/30B/65B) <TARGET_FOLDER> <PRESIGNED_URL> "
+  exit
+fi
+
+MODEL_SIZE=$1  # edit this list with the model sizes you wish to download
+TARGET_FOLDER=$2             # where all files should end up
+PRESIGNED_URL=$3            # replace with presigned url from email
 
 declare -A N_SHARD_DICT
 

@@ -47,8 +47,12 @@ def save_paddle_checkpoint_from_numpy(torch_ckpt_path, outfolder):
 
 
 if __name__ == '__main__':
-    assert len(sys.argv) == 3, f"usage: python {sys.argv[0]} <torch_ckpt_path>(xx.pth)  <np_ckpt_dir>"
+    assert len(sys.argv) >=3 , f"usage: python {sys.argv[0]} <torch_ckpt_path>(xx.pth)  <np_ckpt_dir> <merge(y/n)>(optional)"
     torch_ckpt_path = sys.argv[1]
     np_ckpt_dir = sys.argv[2]
+    merge = True
+    if len(sys.argv) == 4 and sys.argv[3] == "n":
+        merge = False
     convert_pytorch_checkpoint_to_numpy(torch_ckpt_path, outfolder)
-    save_paddle_checkpoint_from_numpy(torch_ckpt_path, outfolder)
+    if merge:
+        save_paddle_checkpoint_from_numpy(torch_ckpt_path, outfolder)

@@ -29,7 +29,7 @@ def convert_pytorch_checkpoint_to_numpy(
             v = v.transpose(0, 1)
 
         print(f"Converting {idx + 1} key: {k} | is_transpose {is_transpose}")
-        np.save(outname, v.data.numpy().astype("float32"))
+        np.save(outname, v.data.numpy())
     del pytorch_state_dict
 
 

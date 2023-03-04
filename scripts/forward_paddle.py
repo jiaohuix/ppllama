@@ -8,16 +8,12 @@ import paddle
 import fire
 import time
 import json
-import random
 import numpy as np
 from pathlib import Path
 import paddle.distributed as dist
-import paddle.fluid as fluid
 import paddle.distributed.fleet as fleet
-from collections import OrderedDict
-from ppllama import ModelArgs, Transformer, Tokenizer, LLaMA
-import numpy as np
 from reprod_log import ReprodLogger
+from ppllama import ModelArgs, Transformer, Tokenizer, LLaMA
 
 
 def set_random_seed(seed, rank_id):

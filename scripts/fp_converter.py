@@ -1,11 +1,6 @@
-import os
 import sys
 import paddle
-from collections import OrderedDict
 from tqdm import tqdm
-import numpy as np
-
-
 
 def fp_converter(in_ckpt, out_ckpt):
 

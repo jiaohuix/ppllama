@@ -1,5 +1,6 @@
 from typing import Tuple
 import os
+import gc
 import sys
 import paddle
 import time
@@ -12,7 +13,7 @@ import paddle.fluid as fluid
 import paddle.distributed.fleet as fleet
 from collections import OrderedDict
 from ppllama import ModelArgs, Transformer, Tokenizer, LLaMA
-import gc
+from tqdm import tqdm
 
 def set_random_seed(seed):
     random.seed(seed)
@@ -51,7 +52,7 @@ def load_pp_weights(ckpt_path, model):
     '''support two format of weights:
         ckpt_path = xx.pdparams
         1. pp weight file:  xx.pdparams                 [50G]
-        2. np weight directory:  xx.pdparams/idx-key.npy [slow but memory efficient 32G]
+        2. np weight directory:  xx.pdparams/idx-key.npy [slow but memory efficient 31G]
         '''
     if os.path.isdir(ckpt_path):
         np_ckpt_names = list(sorted(os.listdir(ckpt_path), key=lambda x: int(x.split("-")[0])))
@@ -65,6 +66,7 @@ def load_pp_weights(ckpt_path, model):
             #         x = paddle.to_tensor(np.load(np_file).astype("float32")),
             #         output = model.state_dict()[key]
             #     )
+        gc.collect()
     else:
         print("Loading state from disk...")
         #PosixPath' object has no attribute 'tell' ; issue: https://github.com/PaddlePaddle/Paddle/issues/34614#issuecomment-1074719350

@@ -63,8 +63,8 @@ Environment configuration and speed:
 
 | Device | Memory | Load speed | Inference speed |
 | ------ | ------ | ---------- | --------------- |
-| cpu    | 50G    | 4min       | 20min (1prompt) |
-| cuda   | 30G    | -          | 15sec (4prompt) |
+| cpu    | 32G    | 6min       | 20min (1prompt) |
+| cuda   | 32G    | -          | 15sec (4prompt) |
 
 cpu: 
 

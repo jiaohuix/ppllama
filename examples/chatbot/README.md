@@ -19,5 +19,7 @@ bot =  SimpleChatbot(usrname="User",
                     prompt=None)
 bot.load_generator(ckpt_dir="ckpt/7B/", tokenizer_path="ckpt/tokenizer.model")
 bot.show()
+
+# bot.clear()  # clear chat history
 ```
 

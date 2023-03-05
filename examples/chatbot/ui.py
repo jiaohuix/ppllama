@@ -16,7 +16,7 @@ class SimpleChatbot:
                  usrname="User",
                  botname="Chatbot",
                  lang="en",
-                 max_gen_len=64,
+                 max_gen_len=128,
                  temperature=0.8,
                  top_p=0.95,
                  prompt=""):
@@ -91,7 +91,7 @@ class SimpleChatbot:
         self.clear_button = widgets.Button(description='Clear', layout=widgets.Layout(width='100px'))
 
         # create chat UI
-        self.chat_ui = widgets.VBox([self.chat_history, widgets.HBox([self.user_input, self.send_button])], layout=self.layout)
+        self.chat_ui = widgets.VBox([self.chat_history, widgets.HBox([self.user_input, self.send_button,self.clear_button])], layout=self.layout)
 
     def show(self):
         # display chat UI
@@ -125,3 +125,5 @@ class SimpleChatbot:
             tgt_text = self.translator_bwd.translate(tgt_text)
         return tgt_text
 
+    def clear(self):
+        self.chat_history.clear_output()

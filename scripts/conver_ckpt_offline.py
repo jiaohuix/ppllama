@@ -12,17 +12,17 @@ def print_state(state):
 
 def convert_pytorch_checkpoint_to_numpy(
         torch_ckpt_path="model.pth",
-        outfolder="."
+        np_ckpt_dir="."
 ):
-    if not os.path.exists(outfolder):
-        os.makedirs(outfolder)
+    if not os.path.exists(np_ckpt_dir):
+        os.makedirs(np_ckpt_dir)
 
     # torch_to_paddle = {}
     do_not_transpose = ["tok_embeddings.weight"]
 
     pytorch_state_dict = torch.load(torch_ckpt_path, map_location="cpu")
     for idx, (k, v) in tqdm(enumerate(pytorch_state_dict.items())):
-        outname = os.path.join(outfolder, f"{idx}-{k}.npy")
+        outname = os.path.join(np_ckpt_dir, f"{idx}-{k}.npy")
         is_transpose = False
         if k.endswith(".weight") and (v.ndim == 2) and (k not in do_not_transpose):
             is_transpose = True
@@ -33,12 +33,12 @@ def convert_pytorch_checkpoint_to_numpy(
     del pytorch_state_dict
 
 
-def save_paddle_checkpoint_from_numpy(torch_ckpt_path, outfolder):
-    paddle_ckpt_path = os.path.join(outfolder, os.path.basename(torch_ckpt_path).replace("pth", "pdparams"))
-    np_ckpt_names = list(sorted(os.listdir(outfolder), key=lambda x: int(x.split("-")[0])))
+def save_paddle_checkpoint_from_numpy(torch_ckpt_path, np_ckpt_dir):
+    paddle_ckpt_path = os.path.join(np_ckpt_dir, os.path.basename(torch_ckpt_path).replace("pth", "pdparams"))
+    np_ckpt_names = list(sorted(os.listdir(np_ckpt_dir), key=lambda x: int(x.split("-")[0])))
     paddle_state_dict = OrderedDict()
     for name in np_ckpt_names:
-        np_file = os.path.join(outfolder, name)
+        np_file = os.path.join(np_ckpt_dir, name)
         key = name.split("-")[1].replace(".npy", "")
         paddle_state_dict[key] = np.load(np_file).astype("float32")
         os.remove(np_file)
@@ -53,6 +53,6 @@ if __name__ == '__main__':
     merge = True
     if len(sys.argv) == 4 and sys.argv[3] == "n":
         merge = False
-    convert_pytorch_checkpoint_to_numpy(torch_ckpt_path, outfolder)
+    convert_pytorch_checkpoint_to_numpy(torch_ckpt_path, np_ckpt_dir)
     if merge:
-        save_paddle_checkpoint_from_numpy(torch_ckpt_path, outfolder)
+        save_paddle_checkpoint_from_numpy(torch_ckpt_path, np_ckpt_dir)

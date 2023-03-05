@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 from fairscale.nn.model_parallel.initialize import initialize_model_parallel
 
-from llama import ModelArgs, Transformer
+from llama import ModelArgs, Transformer,Tokenizer
 from fairscale.nn.model_parallel.layers import (
     ParallelEmbedding,
     RowParallelLinear,
@@ -43,7 +43,7 @@ def reset_paramaters(model):
             m.weight.data.normal_(0, 0.02)
 
 
-def main(ckpt_dir: str):
+def main(ckpt_dir: str, tokenizer_path: str):
     local_rank, world_size = setup_model_parallel()
     if local_rank > 0:
         sys.stdout = open(os.devnull, 'w')
@@ -52,7 +52,8 @@ def main(ckpt_dir: str):
         params = json.loads(f.read())
 
     model_args: ModelArgs = ModelArgs(max_seq_len=1024, max_batch_size=32, **params)
-    model_args.vocab_size = 1024
+    tokenizer = Tokenizer(model_path=tokenizer_path)
+    model_args.vocab_size = tokenizer.n_words
     torch.set_default_tensor_type(torch.cuda.HalfTensor)
     model = Transformer(model_args)
     reset_paramaters(model)

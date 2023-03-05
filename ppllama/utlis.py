@@ -48,7 +48,7 @@ def setup_model_parallel(mp_degree: int = 1) -> Tuple[int, int]:
 
     return local_rank, world_size
 
-def load_pp_weights(ckpt_path, model):
+def load_pp_weights(ckpt_path, model, use_gpu=True):
     '''support two format of weights:
         ckpt_path = xx.pdparams
         1. pp weight file:  xx.pdparams                 [50G]
@@ -75,12 +75,13 @@ def load_pp_weights(ckpt_path, model):
         model.set_dict(checkpoint)
         del checkpoint
         gc.collect()
-    paddle.set_device("gpu")
-    print("Moving model from cpu to cuda...")
-    model.to("gpu")
+    if use_gpu:
+        paddle.set_device("gpu")
+        print("Moving model from cpu to cuda...")
+        model.to("gpu")
 
 
-def load_model(ckpt_dir: str, tokenizer_path: str, local_rank: int, world_size: int) -> LLaMA:
+def load_model(ckpt_dir: str, tokenizer_path: str, local_rank: int, world_size: int, use_gpu: bool =True) -> LLaMA:
     start_time = time.time()
     paddle.set_device("cpu")
     paddle.set_default_dtype("float32")
@@ -98,10 +99,10 @@ def load_model(ckpt_dir: str, tokenizer_path: str, local_rank: int, world_size: 
     tokenizer = Tokenizer(model_path=tokenizer_path)
     model_args.vocab_size = tokenizer.n_words
     model = Transformer(model_args)
-    print(len(model.state_dict()))
 
     # 2 load ckpt
-    load_pp_weights(ckpt_path, model)
+    load_pp_weights(ckpt_path, model, use_gpu)
+    model.eval()
 
     # 3 model parallel
     model = fleet.distributed_model(model)

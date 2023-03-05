@@ -31,7 +31,7 @@ def setup_model_parallel() -> Tuple[int, int]:
     return local_rank, world_size
 
 
-def run_forward(ckpt_dir: str, local_rank: int, world_size: int) -> LLaMA:
+def run_forward(ckpt_dir: str,tokenizer_path: str, local_rank: int, world_size: int) -> LLaMA:
     start_time = time.time()
     checkpoints = sorted(Path(ckpt_dir).glob("*.pth"))
     assert (
@@ -44,7 +44,8 @@ def run_forward(ckpt_dir: str, local_rank: int, world_size: int) -> LLaMA:
         params = json.loads(f.read())
 
     model_args: ModelArgs = ModelArgs(max_seq_len=1024, max_batch_size=4, **params)
-    model_args.vocab_size = 1024
+    tokenizer = Tokenizer(model_path=tokenizer_path)
+    model_args.vocab_size = tokenizer.n_words
     torch.set_default_tensor_type(torch.FloatTensor)
     # torch.set_default_tensor_type(torch.cuda.HalfTensor)
     model = Transformer(model_args)
@@ -65,12 +66,12 @@ def run_forward(ckpt_dir: str, local_rank: int, world_size: int) -> LLaMA:
     reprod_logger.save("forward_torch.npy")
 
 
-def main(ckpt_dir: str):
+def main(ckpt_dir: str,tokenizer_path: str):
     local_rank, world_size = setup_model_parallel()
     if local_rank > 0:
         sys.stdout = open(os.devnull, 'w')
 
-    run_forward(ckpt_dir, local_rank, world_size)
+    run_forward(ckpt_dir,tokenizer_path, local_rank, world_size)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,5 @@
+[2023/03/05 10:57:23] root INFO: input_tokens: 
+[2023/03/05 10:57:23] root INFO: 	mean diff: check passed: True, value: 0.0
+[2023/03/05 10:57:23] root INFO: logits: 
+[2023/03/05 10:57:23] root INFO: 	mean diff: check passed: True, value: 3.0453648491857166e-07
+[2023/03/05 10:57:23] root INFO: diff check passed

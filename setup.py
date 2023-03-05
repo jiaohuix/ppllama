@@ -13,7 +13,7 @@ setup(
     version='0.0.0',
     packages=setuptools.find_packages(
         where=".",
-        exclude=("examples*", "scripts*"),
+        exclude=("ckpt*", "scripts*"),
     ),
     project_urls={
         "Gitter": "https://github.com/MiuGod0126/ppllama",

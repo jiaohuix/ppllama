@@ -7,7 +7,7 @@ This repo is the paddlepaddle implementation of meta's  [LLaMA](https://github.c
 
 3/4:    add  gpu example.
 
-
+3/5:    add  a simplychatbot demo with ipywidgets: [chatbot](./examples/chatbot/README.md).
 
 ## Quickstart
 

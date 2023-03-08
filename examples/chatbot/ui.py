@@ -1,15 +1,55 @@
 import ipywidgets as widgets
 from IPython.display import display, HTML
 from translate import Translator
-from ppllama import load_model, setup_model_parallel
+from ppllama import LLaMA
+import requests
+import random
+import json
+from hashlib import md5
+# Generate salt and sign
+def make_md5(s, encoding='utf-8'):
+    return md5(s.encode(encoding)).hexdigest()
 
+
+class BaiduTranslator:
+    def __init__(self, appid, appkey, from_lang="zh", to_lang="en"):
+        self.appid = appid
+        self.appkey = appkey
+        self.from_lang = from_lang
+        self.to_lang = to_lang
+
+        endpoint = 'http://api.fanyi.baidu.com'
+        path = '/api/trans/vip/translate'
+        self.url = endpoint + path
+
+    def translate(self, text):
+        salt = random.randint(32768, 65536)
+        sign = make_md5(self.appid + text + str(salt) + self.appkey)
+        # Build request
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        payload = {'appid': self.appid, 'q': text, 'from': self.from_lang, 'to': self.to_lang, 'salt': salt, 'sign': sign}
+        r = requests.post(self.url, params=payload, headers=headers)
+        result = r.json()['trans_result'][0]['dst']
+
+        return result
 
 class SimpleChatbot:
     '''
         Usage:
+        from ppllama import load_model,setup_model_parallel
+        local_rank, world_size = setup_model_parallel()
+        model, generator = load_model(ckpt_dir="ckpt/7B/", tokenizer_path="ckpt/tokenizer.model", local_rank=0, world_size=1)
+
         from examples.chatbot.ui import SimpleChatbot
         bot =  SimpleChatbot()
-        bot.load_generator(ckpt_dir="ckpt/7B/", tokenizer_path="ckpt/tokenizer.model")
+        bot.set_generator(generator)
+        bot.show()
+
+        # since translate lib is not stable, you can use baidu fanyi api
+        # http://api.fanyi.baidu.com/product/11
+        APPID= YOUR_APPID
+        APPKEY= YOUR_APPKEY
+        bot.switch_baidu_fanyi(appid=APPID, appkey=APPKEY)
         bot.show()
     '''
     def __init__(self,
@@ -98,13 +138,10 @@ class SimpleChatbot:
         display(self.chat_ui)
 
 
-    def load_generator(self, ckpt_dir="ckpt/7B/", tokenizer_path="ckpt/tokenizer.model"):
-        local_rank, world_size = setup_model_parallel()
-        model, generator = load_model(ckpt_dir=ckpt_dir,
-                                      tokenizer_path=tokenizer_path,
-                                      local_rank=0,
-                                      world_size=1)
+    def set_generator(self, generator):
+        assert isinstance(generator,LLaMA), "generator must be instance of LLaMA"
         self.generator = generator
+        print("Load generator over~")
 
     def chat(self, user_input):
         user_input = self.prompt + user_input
@@ -123,7 +160,13 @@ class SimpleChatbot:
     def postprocess(self, tgt_text):
         if self.translator_bwd is not None:
             tgt_text = self.translator_bwd.translate(tgt_text)
-        return tgt_text
+        return tgt_text 
 
     def clear(self):
         self.chat_history.clear_output()
+
+    def switch_baidu_fanyi(self, appid, appkey):
+        self.translator_fwd = BaiduTranslator(appid,appkey, from_lang=self.lang, to_lang="en") if self.lang != "en" else None
+        self.translator_bwd = BaiduTranslator(appid,appkey, from_lang="en", to_lang=self.lang) if self.lang != "en" else None
+        print("Use baidu translator.")
+

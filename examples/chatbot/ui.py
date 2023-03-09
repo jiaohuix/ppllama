@@ -259,7 +259,7 @@ class SimpleChatbot:
             flex_flow='column',
             align_items='stretch',
             border='solid 1px',
-            width='70%',
+            width='75%',
             height='500px',
             margin='10px'
         )
@@ -281,7 +281,7 @@ class SimpleChatbot:
 
         # create parameters slider
         self.len_slider = widgets.IntSlider(value=128, min=0, max=1024, step=32, description="Max_len:", layout=widgets.Layout(width='90%'))
-        self.temperature_slider = widgets.FloatSlider(value=0.8, min=0, max=1.0, step=0.1, description="Temperature:", layout=widgets.Layout(width='90%'))
+        self.temperature_slider = widgets.FloatSlider(value=0.8, min=0, max=10.0, step=0.1, description="Temperature:", layout=widgets.Layout(width='90%'))
         self.top_p_slider = widgets.FloatSlider(value=0.95, min=0, max=1.0, step=0.1, description="Top_p:", layout=widgets.Layout(width='90%'))
         self.len_slider.observe(self.on_len_change, names="value")
         self.temperature_slider.observe(self.on_temperature_change, names="value")

@@ -40,3 +40,4 @@ bot.switch_baidu_fanyi(appid=APPID, appkey=APPKEY)
 bot.show()
 ```
 
+![](https://ai-studio-static-online.cdn.bcebos.com/27af144d45de4b7bb3cb4d80ae82cec84a0be7e9af8a4251908d35f8c40d6697)

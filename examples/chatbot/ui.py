@@ -260,7 +260,7 @@ class SimpleChatbot:
             align_items='stretch',
             border='solid 1px',
             width='75%',
-            height='500px',
+            height='600px',
             margin='10px'
         )
         # create user input box
@@ -303,7 +303,10 @@ class SimpleChatbot:
         print("Load generator over~")
 
     def chat(self, user_input):
-        assert self.generator is not None, "Generator should not be none."
+        if self.generator is  None:
+            state = self.CHAT_PAIR(send=user_input, recv="Generator should not be none.")
+            self.chatbot_state.append(state)
+            return
         user_input = self.preprocess(user_input)
         user_input = self.prompt + user_input
         bot_response = self.generator.generate([user_input],
@@ -311,8 +314,8 @@ class SimpleChatbot:
                                                temperature=self.temperature,
                                                top_p=self.top_p)
         bot_response = bot_response[0][len(user_input):]
-        bot_response = self.postprocess(bot_response)
-
+        bot_responses = [self.postprocess(bot_response) for resp in bot_response.split('\n')]
+        bot_response = "\n".join(bot_responses)
         state = self.CHAT_PAIR(send=user_input, recv=bot_response)
         self.chatbot_state.append(state)
 

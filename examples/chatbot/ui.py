@@ -314,7 +314,7 @@ class SimpleChatbot:
                                                temperature=self.temperature,
                                                top_p=self.top_p)
         bot_response = bot_response[0][len(user_input):]
-        bot_responses = [self.postprocess(bot_response) for resp in bot_response.split('\n')]
+        bot_responses = [self.postprocess(resp) for resp in bot_response.split('\n')]
         bot_response = "\n".join(bot_responses)
         state = self.CHAT_PAIR(send=user_input, recv=bot_response)
         self.chatbot_state.append(state)

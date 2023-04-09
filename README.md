@@ -18,7 +18,7 @@ This repo is the paddlepaddle implementation of meta's  [LLaMA](https://github.c
 ## Setup
 
 ```shell
-git clone https://github.com/MiuGod0126/ppllama.git
+git clone https://github.com/jiaohuix/ppllama.git
 cd ppllama && pip install -r requirements.txt
 pip install -e ./
 ```
